@@ -1,19 +1,38 @@
-// @ts-check
-const { test, expect } = require('@playwright/test');
+const { test, expect } = require('@playwright/test')
+const { handleCookies } = require('../cookie-handler')
 
-test('has title', async ({ page }) => {
-  await page.goto('https://playwright.dev/');
+test('Change currency to Euro', async ({ page }) => {
+  await page.goto('/')
+  await handleCookies(page)
 
-  // Expect a title "to contain" a substring.
-  await expect(page).toHaveTitle(/Playwright/);
-});
+  const currencyButtons = page.locator('div.flex.flex-row.gap-x-2.items-center:has-text("USD")')
+  const count = await currencyButtons.count()
+  console.log(`Found ${count} elements with USD`)
 
-test('get started link', async ({ page }) => {
-  await page.goto('https://playwright.dev/');
+  if (count === 0) {
+    throw new Error('No USD buttons found!')
+  }
 
-  // Click the get started link.
-  await page.getByRole('link', { name: 'Get started' }).click();
+  for (let i = 0; i < count; i++) {
+    const button = currencyButtons.nth(i)
+    const isVisible = await button.isVisible()
+    if (isVisible) {
+      console.log(`Clicking the button in position ${i}`)
+      await button.click()
+      break
+    }
+  }
 
-  // Expects page to have a heading with the name of Installation.
-  await expect(page.getByRole('heading', { name: 'Installation' })).toBeVisible();
-});
+  const currencyModalGrid = page.locator('div.grid.grid-cols-1.tablet\\:grid-cols-2.gap-4.mb-8.tablet\\:px-6')
+  console.log('Waiting for the currency selection modal...')
+  await currencyModalGrid.waitFor({ state: 'visible', timeout: 10000 })
+  console.log('Currency selection modal visible')
+
+  const euroOption = currencyModalGrid.locator('div:has-text("Euro - €")')
+  await euroOption.click()
+  console.log('Currency changed to Euro.')
+
+  const updatedCurrency = page.locator('div.flex.flex-row.gap-x-2.items-center:has-text("EUR")')
+  await expect(updatedCurrency).toBeVisible()
+  console.log('Currency changed to Euro successfully!')
+})
