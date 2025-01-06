@@ -47,6 +47,28 @@ In addition to the CI/CD pipeline, a Kanban board was created to organize and ma
 - Keep the workflow organized.
 Kanban is available directly in the repository, in the Projects tab.
 
+---
+
+### Cookie Validation Method
+
+A dedicated method was implemented to handle cookies for every test, ensuring proper acceptance or management of cookie modals. This approach improves test reliability and reusability across different scenarios.
+
+---
+
+### Improvements
+
+To enhance the project's maintainability and readability, the following improvements are suggested:
+
+ - Use data-testid Attributes:
+Avoid relying on XPath or complex CSS selectors for locating elements. Add data-testid attributes to the HTML for critical elements. This ensures:
+1. Cleaner and more maintainable test scripts.
+2. Reduced risk of test failures due to UI changes.
+
+- Refactor Locators:
+1. Replace long XPath expressions with simpler, attribute-based selectors.
+
+By adopting these improvements, the project will achieve a more maintainable codebase with improved reliability in automation.
+
 
 
 
